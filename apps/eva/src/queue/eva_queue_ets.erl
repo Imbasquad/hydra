@@ -35,13 +35,16 @@ pull(Queue) when is_record(Queue, eva_queue_ets) ->
         tables = Tables,
         bag = Bag
     } = Queue,
-    case eva_queue_bag:available(Bag) of
+    Available = eva_queue_bag:available(Bag),
+    case Available of
         [] ->
             pull(Queue#eva_queue_ets{bag = eva_queue_bag:reset(Bag)});
         List ->
             case pull(Tables, List, Bag) of
-                {error, empty} ->
+                {error, empty} when length(Available) == 5 ->
                     {error, empty};
+                {error, empty} ->
+                    pull(Queue#eva_queue_ets{bag = eva_queue_bag:reset(Bag)});
                 {ok, Bag1, Ret} ->
                     {ok, Queue#eva_queue_ets{bag = Bag1}, Ret}
             end
@@ -58,7 +61,9 @@ pull(Tables, [P1 | P], Bag) ->
             pull(Tables, P, Bag);
         Key ->
             {ok, Bag1} = eva_queue_bag:buy(Bag, P1),
-            {ok, Bag1, ets:lookup(Table, Key)}
+            [Req] = ets:lookup(Table, Key),
+            ets:delete(Table, Key),
+            {ok, Bag1, Req}
     end.
 
 

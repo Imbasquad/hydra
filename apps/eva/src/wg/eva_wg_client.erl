@@ -55,7 +55,16 @@ do_request(Point, Params) ->
 
 
 do_http_request(RequestURI) ->
-    {ok, httpc:request(binary_to_list(RequestURI))}.
+    case httpc:request(binary_to_list(RequestURI)) of
+        {ok, {{_Version, 200, _Phrase}, _Headers, Body}} ->
+            {ok, Body};
+        {ok, {{_Version, Code, _Phrase}, _Headers, _Body} = Ret}  ->
+            ?ERROR("HTTP request (~p) returned ~p code. Ret: ~p", [RequestURI, Code, Ret]),
+            throw({invalid_http_response_code, Code});
+        {error, Reason} ->
+            ?ERROR("HTTP request (~p) returned an error: ~p", [RequestURI, Reason]),
+            throw(Reason)
+    end.
 
 
 

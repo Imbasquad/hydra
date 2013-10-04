@@ -16,6 +16,7 @@ start_link() ->
 
 init([]) ->
     Children = [
-        ?GENERIC_SUPERVISOR(eva_queue_sup)
+        ?GENERIC_SUPERVISOR(eva_queue_sup),
+        ?GENERIC_SUPERVISOR(eva_pulsar_sup)
     ],
     {ok, {{one_for_one, 5, 10}, Children}}.
