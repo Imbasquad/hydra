@@ -18,7 +18,8 @@ request(Req) when is_record(Req, info_req) ->
     } = Req,
     Params = [
         {?PARAM_APPID, AppId},
-        {?PARAM_IDS, Ids}
+        {?PARAM_IDS, Ids},
+        {?PARAM_FIELDS, <<"statistics,account_id,created_at,updated_at,nickname">>}
     ],
     try do_request(?API_POINT_INFO, Params) of {ok, Ret} ->
         {ok, Ret}
@@ -26,16 +27,17 @@ request(Req) when is_record(Req, info_req) ->
         {error, Error}
     end;
 
-request(Req) when is_record(Req, vehicle_req) ->
-    #vehicle_req{
+request(Req) when is_record(Req, tank_req) ->
+    #tank_req{
         application_id = AppId,
         ids = Ids
     } = Req,
     Params = [
         {?PARAM_APPID, AppId},
-        {?PARAM_IDS, Ids}
+        {?PARAM_IDS, Ids},
+        {?PARAM_FIELDS, <<"statistics,tank_id">>}
     ],
-    try do_request(?API_POINT_VEHICLE, Params) of {ok, Ret} ->
+    try do_request(?API_POINT_TANK, Params) of {ok, Ret} ->
         {ok, Ret}
     catch throw:Error ->
         {error, Error}
