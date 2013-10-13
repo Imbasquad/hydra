@@ -1,8 +1,8 @@
 ## Name of the node
--name {{node_name}}@127.0.0.1
+-name {{hydra_node}}
 
 ## Cookie for distributed erlang
--setcookie {{node_cookie}}
+-setcookie {{cookie}}
 
 ## Heartbeat management; auto-restarts VM if it dies or becomes unresponsive
 ## (Disabled by default..use with caution!)
