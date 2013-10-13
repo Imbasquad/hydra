@@ -2,7 +2,7 @@ all:
 	rebar compile
 
 build:
-	(rebar generate overlay_vars=vars/${ENV}.config)
+	(rebar generate overlay_vars=vars/${ENV}.config overlay_vars=/etc/squadder/security.config)
 
 clean:
 	rebar clean
