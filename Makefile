@@ -12,7 +12,7 @@ depends:
 	rebar get-deps
 
 console: all build
-	rel/eva/bin/eva console
+	rel/hydra/bin/hydra console
 
 cconsole: all build
-	rel/eva/bin/eva console_clean
+	rel/hydra/bin/hydra console_clean

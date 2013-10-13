@@ -1,4 +1,4 @@
--module(eva_env).
+-module(hydra_env).
 
 -export([get/1, get/2]).
 
@@ -9,18 +9,18 @@
 
 -spec get(list() | atom()) -> term().
 get([Elem | List]) ->
-    get(List, application:get_env(eva, Elem), undefined);
+    get(List, application:get_env(hydra, Elem), undefined);
 
 get(Elem) ->
-    get([], application:get_env(eva, Elem), undefined).
+    get([], application:get_env(hydra, Elem), undefined).
 
 
 -spec get(list() | atom(), term()) -> term().
 get([Elem | List], Default) ->
-    get(List, application:get_env(eva, Elem), Default);
+    get(List, application:get_env(hydra, Elem), Default);
 
 get(Elem, Default) ->
-    get([], application:get_env(eva, Elem), Default).
+    get([], application:get_env(hydra, Elem), Default).
 
 
 -spec get(list() | atom(), term(), term()) -> term().

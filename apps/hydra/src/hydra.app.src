@@ -1,11 +1,11 @@
-{application, eva, [
-    {description, "Eva WG Public API gate"},
+{application, hydra, [
+    {description, "Hydra WG Public API gate"},
     {vsn, "0.1"},
     {registered, []},
     {applications, [
         kernel,
         stdlib
     ]},
-    {mod, {eva_app, []}},
+    {mod, {hydra_app, []}},
     {env, []}
 ]}.

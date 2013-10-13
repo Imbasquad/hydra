@@ -1,16 +1,16 @@
--module(eva_queue_head).
+-module(hydra_queue_head).
 
 -behaviour(gen_server).
 
--include("eva.hrl").
--include("eva_queue.hrl").
+-include("hydra.hrl").
+-include("hydra_queue.hrl").
 
 -export([start_link/0]).
 
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
 
 -record(state, {
-    queue_ets :: eva_queue_ets:queue_ets()
+    queue_ets :: hydra_queue_ets:queue_ets()
 }).
 
 
@@ -25,7 +25,7 @@ start_link() ->
 
 
 init([]) ->
-    {ok, Queue} = gen_server:call(eva_queue_tail, ?QUEUE_TRANSFER),
+    {ok, Queue} = gen_server:call(hydra_queue_tail, ?QUEUE_TRANSFER),
     ?INFO("Queue transfer complete"),
     {ok, #state{queue_ets = Queue}}.
 
@@ -88,7 +88,7 @@ do_pull(Queue, 0, Acc) ->
     {ok, Queue, Acc};
 
 do_pull(Queue, Count, Acc) ->
-    case eva_queue_ets:pull(Queue) of
+    case hydra_queue_ets:pull(Queue) of
         {error, empty} ->
             do_pull(Queue, 0, Acc);
         {ok, Queue1, Ret} ->

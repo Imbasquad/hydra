@@ -1,4 +1,4 @@
--define(LIBDIR(Dir), code:lib_dir(bigwoot, Dir)).
+-define(LIBDIR(Dir), code:lib_dir(hydra, Dir)).
 
 -define(START, ?START(static)).
 -define(START(Name), ?INFO("Start/~p", [Name])).

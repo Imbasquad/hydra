@@ -1,10 +1,10 @@
--module(eva_pulsar_worker).
+-module(hydra_pulsar_worker).
 
 -behaviour(gen_server).
 
--include("eva.hrl").
--include("eva_queue.hrl").
--include("eva_pulsar_worker.hrl").
+-include("hydra.hrl").
+-include("hydra_queue.hrl").
+-include("hydra_pulsar_worker.hrl").
 
 %% API
 -export([start_link/0, start/0, stop/1, req/1]).
@@ -20,16 +20,16 @@
 
 
 start() ->
-    supervisor:start_child(eva_pulsar_worker_sup, []).
+    supervisor:start_child(hydra_pulsar_worker_sup, []).
 
 
 
 stop(Pid) ->
-    supervisor:terminate_child(eva_pulsar_worker_sup, Pid).
+    supervisor:terminate_child(hydra_pulsar_worker_sup, Pid).
 
 
 
-req(Req) when is_record(Req, eva_queue_req) ->
+req(Req) when is_record(Req, hydra_queue_req) ->
     {ok, Pid} = start(),
     gen_server:cast(Pid, ?REQ(Req)),
     ok.
@@ -57,11 +57,11 @@ handle_call(_Request, _From, State) ->
 
 
 handle_cast(?REQ(Req), State) ->
-    #eva_queue_req{
+    #hydra_queue_req{
         from = From,
         payload = Payload
     } = Req,
-    Ret = eva_wg_client:request(Payload),
+    Ret = hydra_wg_client:request(Payload),
     gen_server:reply(From, Ret),
     {stop, normal, State};
 

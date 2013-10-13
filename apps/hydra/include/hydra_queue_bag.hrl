@@ -1,4 +1,4 @@
--record(eva_queue_bag, {
+-record(hydra_queue_bag, {
     %% pliorities
     p :: list(),
     %% priorities bags

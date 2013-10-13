@@ -1,7 +1,8 @@
--module(eva_pulsar_sup).
+-module(hydra_queue_sup).
 
 -behaviour(supervisor).
 
+-include("hydra.hrl").
 -include("supervisor.hrl").
 
 -export([start_link/0]).
@@ -17,10 +18,11 @@ start_link() ->
     supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
 init([]) ->
-    {ok, {{one_for_one, 0, 1}, [
-        ?GENERIC_WORKER(eva_pulsar),
-        ?GENERIC_SUPERVISOR(eva_pulsar_worker_sup)
-    ]}}.
+    Children = [
+        ?GENERIC_WORKER(hydra_queue_tail),
+        ?GENERIC_WORKER(hydra_queue_head)
+    ],
+    {ok, {{one_for_all, 5, 10}, Children}}.
 
 
 

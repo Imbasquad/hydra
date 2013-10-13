@@ -1,6 +1,6 @@
 @setlocal
 
-@set node_name=eva
+@set node_name=hydra
 
 @rem Get the absolute path to the parent directory,
 @rem which is assumed to be the node root.

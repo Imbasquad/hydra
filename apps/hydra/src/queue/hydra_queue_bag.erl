@@ -1,7 +1,7 @@
--module(eva_queue_bag).
+-module(hydra_queue_bag).
 
--include("eva.hrl").
--include("eva_queue_bag.hrl").
+-include("hydra.hrl").
+-include("hydra_queue_bag.hrl").
 
 -export([new/0, new_linear/0, available/1, buy/2, reset/1]).
 
@@ -13,22 +13,22 @@
 
 
 
--type bag() :: {eva_queue_bag, list(), list(), list(), non_neg_integer()}.
+-type bag() :: {hydra_queue_bag, list(), list(), list(), non_neg_integer()}.
 
 
 
 %% Interface
 
 
--spec new() -> eva_queue_bag:bag().
+-spec new() -> hydra_queue_bag:bag().
 new() ->
     new_linear().
 
 
 
--spec new_linear() -> eva_queue_bag:bag().
+-spec new_linear() -> hydra_queue_bag:bag().
 new_linear() ->
-    #eva_queue_bag{
+    #hydra_queue_bag{
         p = ps(),
         pb = pbags(),
         pl = plimits_linear(),
@@ -36,8 +36,8 @@ new_linear() ->
     }.
 
 
--spec available(eva_queue_bag:bag()) -> list().
-available(#eva_queue_bag{p = P, pb = PB, pl = PL}) ->
+-spec available(hydra_queue_bag:bag()) -> list().
+available(#hydra_queue_bag{p = P, pb = PB, pl = PL}) ->
     available(P, [], PB, PL, [], []).
 
 -spec available(list(), list(), list(), list(), list(), list()) -> list().
@@ -55,18 +55,18 @@ available([P1 | P], PAcc, [PB1 | PB], [PL1 | PL], PLAcc, Acc) when PB1 =< PL1 ->
 
 
 
--spec buy(eva_queue_bag:bag(), non_neg_integer()) -> {ok, eva_queue_bag:bag()}.
-buy(Bag, P) when is_record(Bag, eva_queue_bag) ->
-    #eva_queue_bag{pb = PB0, prc = Prc} = Bag,
+-spec buy(hydra_queue_bag:bag(), non_neg_integer()) -> {ok, hydra_queue_bag:bag()}.
+buy(Bag, P) when is_record(Bag, hydra_queue_bag) ->
+    #hydra_queue_bag{pb = PB0, prc = Prc} = Bag,
     PB = lists:nth(P, PB0),
     PB1 = lists:sublist(PB0, 1, P - 1) ++ [PB + Prc] ++ lists:nthtail(P, PB0),
-    {ok, Bag#eva_queue_bag{pb = PB1}}.
+    {ok, Bag#hydra_queue_bag{pb = PB1}}.
 
 
 
--spec reset(eva_queue_bag:bag()) -> eva_queue_bag:bag().
-reset(Bag) when is_record(Bag, eva_queue_bag) ->
-    Bag#eva_queue_bag{pb = pbags()}.
+-spec reset(hydra_queue_bag:bag()) -> hydra_queue_bag:bag().
+reset(Bag) when is_record(Bag, hydra_queue_bag) ->
+    Bag#hydra_queue_bag{pb = pbags()}.
 
 
 

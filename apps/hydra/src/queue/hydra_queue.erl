@@ -1,7 +1,7 @@
--module(eva_queue).
+-module(hydra_queue).
 
--include("eva.hrl").
--include("eva_queue.hrl").
+-include("hydra.hrl").
+-include("hydra_queue.hrl").
 
 -export([push/2, pull/1]).
 
@@ -13,9 +13,9 @@
 -spec push(non_neg_integer(), term()) -> {ok, term()}.
 push(Priority, Payload)
 when is_integer(Priority), Priority < 6, Priority > 0 ->
-    gen_server:call(eva_queue_tail, ?PUSH_CMD(Priority, Payload), infinity).
+    gen_server:call(hydra_queue_tail, ?PUSH_CMD(Priority, Payload), infinity).
 
 
 -spec pull(non_neg_integer()) -> {error, empty} | {ok, list()}.
 pull(Count) when is_integer(Count) ->
-    gen_server:call(eva_queue_head, ?PULL_CMD(Count), infinity).
+    gen_server:call(hydra_queue_head, ?PULL_CMD(Count), infinity).

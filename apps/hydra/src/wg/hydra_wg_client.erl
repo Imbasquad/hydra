@@ -1,7 +1,7 @@
--module(eva_wg_client).
+-module(hydra_wg_client).
 
--include("eva.hrl").
--include("papi.hrl").
+-include("hydra.hrl").
+-include("hydra_wg.hrl").
 
 -export([request/1]).
 

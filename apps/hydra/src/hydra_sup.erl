@@ -1,8 +1,8 @@
--module(eva_sup).
+-module(hydra_sup).
 
 -behaviour(supervisor).
 
--include("eva.hrl").
+-include("hydra.hrl").
 -include("supervisor.hrl").
 
 -export([start_link/0]).
@@ -16,7 +16,7 @@ start_link() ->
 
 init([]) ->
     Children = [
-        ?GENERIC_SUPERVISOR(eva_queue_sup),
-        ?GENERIC_SUPERVISOR(eva_pulsar_sup)
+        ?GENERIC_SUPERVISOR(hydra_queue_sup),
+        ?GENERIC_SUPERVISOR(hydra_pulsar_sup)
     ],
     {ok, {{one_for_one, 5, 10}, Children}}.

@@ -1,4 +1,4 @@
--module(eva_pulsar_worker_sup).
+-module(hydra_pulsar_worker_sup).
 
 -behaviour(supervisor).
 
@@ -18,7 +18,7 @@ start_link() ->
 
 init([]) ->
     {ok, {{simple_one_for_one, 0, 1}, [
-        ?CHILD(eva_pulsar_worker, [], temporary, brutal_kill, worker)
+        ?CHILD(hydra_pulsar_worker, [], temporary, brutal_kill, worker)
     ]}}.
 
 

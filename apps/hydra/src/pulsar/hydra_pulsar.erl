@@ -1,9 +1,9 @@
--module(eva_pulsar).
+-module(hydra_pulsar).
 
 -behaviour(gen_server).
 
--include("eva.hrl").
--include("eva_pulsar.hrl").
+-include("hydra.hrl").
+-include("hydra_pulsar.hrl").
 
 %% API
 -export([start_link/0]).
@@ -23,7 +23,7 @@ start_link() ->
 
 
 init([]) ->
-    RPS = eva_env:get(requests_per_second, 15),
+    RPS = hydra_env:get(requests_per_second, 15),
     {ok, TRef} = init_pulsar(),
     {ok, #state{rps = RPS, tref = TRef}}.
 
@@ -64,7 +64,7 @@ code_change(_OldVsn, State, _Extra) ->
 
 
 handle_impulse(RPS) ->
-    case eva_queue:pull(RPS) of
+    case hydra_queue:pull(RPS) of
         {error, empty} ->
             nop;
         {ok, ReqList} ->
@@ -79,7 +79,7 @@ start_workers([]) ->
 
 start_workers([Req | ReqList]) ->
     ?INFO("Starting execution of req: ~p", [Req]),
-    eva_pulsar_worker:req(Req),
+    hydra_pulsar_worker:req(Req),
     start_workers(ReqList).
 
 
