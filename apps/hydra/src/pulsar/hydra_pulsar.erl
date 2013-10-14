@@ -3,6 +3,7 @@
 -behaviour(gen_server).
 
 -include("hydra.hrl").
+-include("hydra_metrics.hrl").
 -include("hydra_pulsar.hrl").
 
 %% API
@@ -68,7 +69,7 @@ handle_impulse(RPS) ->
         {error, empty} ->
             nop;
         {ok, ReqList} ->
-            ?INFO("Found ~p requests", [length(ReqList)]),
+            folsom_metrics:notify(?METRIC_REQ_OUTCOMING, length(ReqList)),
             start_workers(ReqList)
     end.
 
