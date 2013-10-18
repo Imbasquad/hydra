@@ -1,4 +1,4 @@
--define(API_POINT, <<"http://api.worldoftanks.ru/2.0">>).
+-define(API_POINT, <<"http://api.worldoftanks.ru/wot">>).
 -define(PARAM_APPID, <<"application_id">>).
 -define(PARAM_IDS, <<"account_id">>).
 -define(PARAM_FIELDS, <<"fields">>).
