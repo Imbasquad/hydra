@@ -69,7 +69,7 @@ handle_impulse(RPS) ->
         {error, empty} ->
             nop;
         {ok, ReqList} ->
-            folsom_metrics:notify(?METRIC_REQ_OUTCOMING, length(ReqList)),
+            metric:inc([?METRIC_CNT_REQ_OUT_TOTAL], length(ReqList)),
             start_workers(ReqList)
     end.
 
@@ -79,7 +79,6 @@ start_workers([]) ->
     ok;
 
 start_workers([Req | ReqList]) ->
-    ?INFO("Starting execution of req: ~p", [Req]),
     hydra_pulsar_worker:req(Req),
     start_workers(ReqList).
 

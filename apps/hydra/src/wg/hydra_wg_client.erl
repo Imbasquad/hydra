@@ -2,6 +2,7 @@
 
 -include("hydra.hrl").
 -include("hydra_wg.hrl").
+-include("hydra_metrics.hrl").
 
 -export([request/1]).
 
@@ -21,7 +22,10 @@ request(Req) when is_record(Req, info_req) ->
         {?PARAM_IDS, Ids},
         {?PARAM_FIELDS, <<"statistics,account_id,created_at,updated_at,nickname">>}
     ],
-    try do_request(?API_POINT_INFO, Params) of {ok, Ret} ->
+    metric:inc([?METRIC_CNT_REQ_OUT_TOTAL, ?METRIC_CNT_REQ_OUT_INFO]),
+    TimingMetrics = [?METRIC_TIM_HTTP_TOTAL, ?METRIC_TIM_HTTP_INFO],
+    DoRequest = fun() -> do_request(?API_POINT_INFO, Params) end,
+    try metric:timewrap(TimingMetrics, DoRequest) of {ok, Ret} ->
         {ok, Ret}
     catch throw:Error ->
         {error, Error}
@@ -37,10 +41,14 @@ request(Req) when is_record(Req, tank_req) ->
         {?PARAM_IDS, Ids},
         {?PARAM_FIELDS, <<"statistics,tank_id">>}
     ],
-    try do_request(?API_POINT_TANK, Params) of {ok, Ret} ->
-        {ok, Ret}
-    catch throw:Error ->
-        {error, Error}
+    metric:inc([?METRIC_CNT_REQ_OUT_TOTAL, ?METRIC_CNT_REQ_OUT_TANK]),
+    TimingMetrics = [?METRIC_TIM_HTTP_TOTAL, ?METRIC_TIM_HTTP_TANK],
+    DoRequest = fun() -> do_request(?API_POINT_TANK, Params) end,
+    case metric:timewrap(TimingMetrics, DoRequest) of
+        {ok, Ret} ->
+            {ok, Ret};
+        {error, Error} ->
+            {error, Error}
     end.
 
 
@@ -59,13 +67,16 @@ do_request(Point, Params) ->
 do_http_request(RequestURI) ->
     case httpc:request(binary_to_list(RequestURI)) of
         {ok, {{_Version, 200, _Phrase}, _Headers, Body}} ->
+            metric:inc([?METRIC_CNT_HTTP_SUCCESS_TOTAL]),
             {ok, Body};
-        {ok, {{_Version, Code, _Phrase}, _Headers, _Body} = Ret}  ->
-            ?ERROR("HTTP request (~p) returned ~p code. Ret: ~p", [RequestURI, Code, Ret]),
-            throw({invalid_http_response_code, Code});
+        {ok, {{_Version, Code, _Phrase}, _Headers, _Body}}  ->
+            ?ERROR("HTTP request (~p) returned ~p code", [RequestURI, Code]),
+            metric:inc([?METRIC_CNT_HTTP_FAILURE_TOTAL, ?METRIC_CNT_HTTP_FAILURE(Code)]),
+            {error, {invalid_http_response_code, Code}};
         {error, Reason} ->
+            metric:inc([?METRIC_CNT_HTTP_FAILURE_TOTAL, ?METRIC_CNT_HTTP_FAILURE(Reason)]),
             ?ERROR("HTTP request (~p) returned an error: ~p", [RequestURI, Reason]),
-            throw(Reason)
+            {error, Reason}
     end.
 
 
