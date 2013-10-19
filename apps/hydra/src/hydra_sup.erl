@@ -22,7 +22,6 @@ start_link() ->
     supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
 init([]) ->
-    define_metrics(),
     Children = [
         ?GENERIC_SUPERVISOR(hydra_queue_sup),
         ?GENERIC_SUPERVISOR(hydra_pulsar_sup)
@@ -34,9 +33,3 @@ init([]) ->
 %% Internals
 
 
-
-define_metrics() ->
-    folsom_metrics:new_meter(?METRIC_REQ_INCOMING_INFO),
-    folsom_metrics:new_meter(?METRIC_REQ_INCOMING_TANK),
-    folsom_metrics:new_meter(?METRIC_REQ_OUTCOMING),
-    ok.

@@ -16,7 +16,7 @@ info(Ids) when is_list(Ids) ->
         application_id = hydra_env:get(application_id, <<"DEFAULT_APPLICATION_ID">>),
         ids = Ids
     },
-    folsom_metrics:notify(?METRIC_REQ_INCOMING_INFO, 1),
+    metric:inc([?METRIC_CNT_REQ_INC_TOTAL, ?METRIC_CNT_REQ_INC_INFO]),
     hydra_queue:push(3, Req).
 
 tank(Ids) when is_list(Ids) ->
@@ -24,7 +24,7 @@ tank(Ids) when is_list(Ids) ->
         application_id = hydra_env:get(application_id, <<"DEFAULT_APPLICATION_ID">>),
         ids = Ids
     },
-    folsom_metrics:notify(?METRIC_REQ_INCOMING_TANK, 1),
+    metric:inc([?METRIC_CNT_REQ_INC_TOTAL, ?METRIC_CNT_REQ_INC_TANK]),
     hydra_queue:push(3, Req).
 
 
