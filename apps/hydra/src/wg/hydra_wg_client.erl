@@ -40,7 +40,7 @@ request(Req) when is_record(Req, tank_req) ->
     Params = [
         {?PARAM_APPID, AppId},
         {?PARAM_IDS, Ids},
-        {?PARAM_FIELDS, <<"statistics,tank_id">>}
+        {?PARAM_FIELDS, <<"statistics.all,tank_id">>}
     ],
     metric:inc([?METRIC_CNT_REQ_OUT_TOTAL, ?METRIC_CNT_REQ_OUT_TANK]),
     TimingMetrics = [?METRIC_TIM_HTTP_TOTAL, ?METRIC_TIM_HTTP_TANK],
