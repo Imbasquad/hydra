@@ -70,17 +70,22 @@ handle_impulse(RPS) ->
             nop;
         {ok, ReqList} ->
             metric:inc([?METRIC_CNT_REQ_OUT_TOTAL], length(ReqList)),
-            start_workers(ReqList)
+            lists:foreach(fun({Delay, Req}) ->
+                ?INFO("Running request after ~p", [Delay]),
+                timer:apply_after(Delay, hydra_pulsar_worker, req, [Req])
+            end, lists:zip(get_delays(RPS, length(ReqList)), ReqList))
     end.
 
 
 
-start_workers([]) ->
-    ok;
+get_delays(RPS, Size) ->
+    get_delays(RPS, Size, 0, erlang:round(1000 / RPS) , []).
 
-start_workers([Req | ReqList]) ->
-    hydra_pulsar_worker:req(Req),
-    start_workers(ReqList).
+get_delays(RPS, Size, Delay, Quant, Acc) when length(Acc) < Size ->
+    get_delays(RPS, Size, Delay + Quant, Quant, Acc ++ [Delay]);
+
+get_delays(_RPS, _Size, _Delay, _Quant, Acc) ->
+    Acc.
 
 
 

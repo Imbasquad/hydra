@@ -75,7 +75,7 @@ do_http_request(RequestURI) ->
             metric:inc([?METRIC_CNT_HTTP_FAILURE_TOTAL, ?METRIC_CNT_HTTP_FAILURE(Code)]),
             {error, {invalid_http_response_code, Code}};
         {error, Reason} ->
-            metric:inc([?METRIC_CNT_HTTP_FAILURE_TOTAL, ?METRIC_CNT_HTTP_FAILURE(Reason)]),
+            metric:inc([?METRIC_CNT_HTTP_FAILURE_TOTAL]),
             ?ERROR("HTTP request (~p) returned an error: ~p", [RequestURI, Reason]),
             {error, Reason}
     end.
