@@ -70,8 +70,8 @@ do_http_request(RequestURI) ->
         {ok, {{_Version, 200, _Phrase}, _Headers, Body}} ->
             metric:inc([?METRIC_CNT_HTTP_SUCCESS_TOTAL]),
             {ok, Body};
-        {ok, {{_Version, Code, _Phrase}, _Headers, _Body}}  ->
-            ?ERROR("HTTP request (~p) returned ~p code", [RequestURI, Code]),
+        {ok, {{_Version, Code, _Phrase}, _Headers, Body}}  ->
+            ?ERROR("HTTP request (~p) returned ~p code:~n~p", [RequestURI, Code, Body]),
             metric:inc([?METRIC_CNT_HTTP_FAILURE_TOTAL, ?METRIC_CNT_HTTP_FAILURE(Code)]),
             {error, {invalid_http_response_code, Code}};
         {error, Reason} ->
