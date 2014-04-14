@@ -47,7 +47,7 @@ handle_call(?PUSH_CMD(Priority, Payload), From, #state{queue_ets = Queue} = Stat
     Req = #hydra_queue_req{
         created_at = erlang:now(),
         from = From,
-        payload = Payload
+        uri = Payload
     },
     {ok, pushed} = hydra_queue_ets:push(Queue, Priority, Req),
     {noreply, State};

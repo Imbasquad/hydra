@@ -1,7 +1,7 @@
 -record(hydra_queue_req, {
     created_at :: erlang:timestamp(),
     from :: tuple(),
-    payload :: term()
+    uri :: list()
 }).
 
 -define(PUSH_CMD(Priority, Payload), {push_cmd, Priority, Payload}).

@@ -59,11 +59,11 @@ handle_call(_Request, _From, State) ->
 handle_cast(?REQ(Req), State) ->
     #hydra_queue_req{
         from = {Pid, _Tag} = From,
-        payload = Payload
+        uri = URI
     } = Req,
     case erlang:process_info(Pid, status) of
         {status, waiting} ->
-            Ret = hydra_wg_client:request(Payload),
+            Ret = hydra_http:req(URI),
             gen_server:reply(From, Ret);
         {status, Status} ->
             ?WARNING("Caller process is in status '~p', dropping the task", [Status]);
