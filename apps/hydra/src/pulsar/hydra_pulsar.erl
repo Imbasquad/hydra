@@ -30,13 +30,14 @@ init([]) ->
 
 
 
-handle_call(_Request, _From, State) ->
-    Reply = ok,
-    {reply, Reply, State}.
+handle_call(Request, _From, State) ->
+    ?WARNING("Invalid call arrived: ~p", [Request]),
+    {reply, not_implemented, State}.
 
 
 
-handle_cast(_Msg, State) ->
+handle_cast(Msg, State) ->
+    ?WARNING("Invalid cast arrived: ~p", [Msg]),
     {noreply, State}.
 
 
@@ -45,7 +46,8 @@ handle_info(?IMPULSE, State) ->
     handle_impulse(State#state.rps),
     {noreply, State};
 
-handle_info(_Info, State) ->
+handle_info(Info, State) ->
+    ?WARNING("Invalid info arrived: ~p", [Info]),
     {noreply, State}.
 
 
