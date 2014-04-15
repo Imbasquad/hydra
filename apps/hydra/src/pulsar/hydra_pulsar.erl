@@ -5,6 +5,7 @@
 -include("hydra.hrl").
 -include("hydra_metrics.hrl").
 -include("hydra_pulsar.hrl").
+-include_lib("unicorn/include/unicorn_client.hrl").
 
 %% API
 -export([start_link/0]).
@@ -24,7 +25,7 @@ start_link() ->
 
 
 init([]) ->
-    RPS = hydra_env:get(requests_per_second, 15),
+    {ok, RPS} = unicorn:subscribe(hydra_env:get(config), [<<"rps">>]),
     {ok, TRef} = init_pulsar(),
     {ok, #state{rps = RPS, tref = TRef}}.
 
@@ -40,6 +41,9 @@ handle_cast(_Msg, State) ->
     {noreply, State}.
 
 
+
+handle_info(?UNICORN_NOTIFY(_File, _Path, RPS, _FullDocument), State) ->
+    {noreply, State#state{rps = RPS}};
 
 handle_info(?IMPULSE, State) ->
     handle_impulse(State#state.rps),
@@ -65,6 +69,7 @@ code_change(_OldVsn, State, _Extra) ->
 
 
 handle_impulse(RPS) ->
+    ?DEBUG("RPS: ~p", [RPS]),
     case hydra_queue:pull(RPS) of
         {error, empty} ->
             nop;
