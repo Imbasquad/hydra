@@ -11,7 +11,7 @@
 
 
 start(_StartType, _StartArgs) ->
-    ok = unicorn:load(<<"/Users/shizz/code/_etc/squadder/hydra/config.json">>, fun loader/1, fun validator/1),
+    ok = unicorn:load(hydra_env:get(config), fun loader/1, fun validator/1),
     hydra_sup:start_link().
 
 stop(_State) ->
