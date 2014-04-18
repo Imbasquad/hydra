@@ -4,37 +4,63 @@
 
 
 
+-type metric_path_part() :: atom() | integer() | string() | binary().
+-type metric_path() :: [metric_path_part()].
+-type metric_key() :: binary().
+
+-export_type([metric_path_part/0, metric_path/0, metric_key/0]).
+
+
 %% Interface
 
 
 
+-spec inc(Keys :: [metric_path()]) ->
+    ok.
 inc(Keys) ->
     inc(Keys, 1).
 
+
+
+-spec inc(Keys :: [metric_path()], Value :: integer()) ->
+    ok.
 inc(Keys, Value) ->
     lists:foreach(fun(Key) ->
         estatsd:increment(key(Key), Value)
-    end, Keys).
+    end, Keys),
+    ok.
 
 
 
+-spec dec(Keys :: [metric_path()]) ->
+    ok.
 dec(Keys) ->
     dec(Keys, 1).
 
+
+
+-spec dec(Keys :: [metric_path()], Value :: integer()) ->
+    ok.
 dec(Keys, Value) ->
     lists:foreach(fun(Key) ->
         estatsd:decrement(key(Key), Value)
-    end, Keys).
+    end, Keys),
+    ok.
 
 
 
+-spec gauge(Keys :: [metric_path()], Value :: integer()) ->
+    ok.
 gauge(Keys, Value) ->
     lists:foreach(fun(Key) ->
         estatsd:gauge(key(Key), Value)
-    end, Keys).
+    end, Keys),
+    ok.
 
 
 
+-spec timewrap(Keys :: [metric_path()], Fun :: fun(() -> term())) ->
+    term().
 timewrap(Keys, Fun) ->
     T = erlang:now(),
     Result = Fun(),
@@ -45,6 +71,8 @@ timewrap(Keys, Fun) ->
 
 
 
+-spec key(Key :: metric_path_part() | metric_path()) ->
+    metric_key().
 key(Key) when is_binary(Key) ->
     Key;
 
@@ -70,6 +98,8 @@ key([Elem | List], Acc) ->
 
 
 
+-spec to_binary(metric_path_part()) ->
+    binary().
 to_binary(Elem) when is_atom(Elem) ->
     atom_to_binary(Elem, latin1);
 
