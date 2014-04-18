@@ -8,7 +8,7 @@
 
 
 
--spec req(Req :: string()) ->
+-spec req(Req :: hydra_queue:queue_req_uri()) ->
     {ok, Body :: binary()} |
     {error, Status :: non_neg_integer()} |
     {error, Reason :: term()}.
