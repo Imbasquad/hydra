@@ -1,0 +1,5 @@
+language: erlang
+otp_release:
+  - R16B03
+notifications:
+  slack: imbasquad:88Glhx7MUhQ4oqa8blGWMOu7
