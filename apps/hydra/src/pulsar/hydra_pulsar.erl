@@ -5,10 +5,9 @@
 -include("hydra.hrl").
 -include("hydra_metrics.hrl").
 -include("hydra_pulsar.hrl").
--include_lib("unicorn/include/unicorn_client.hrl").
 
 %% API
--export([start_link/0]).
+-export([start_link/0, set_rps/1]).
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
@@ -19,15 +18,23 @@
 
 
 
+%% Interface
+
+
 start_link() ->
     gen_server:start_link({local, ?MODULE}, ?MODULE, [], []).
 
 
 
 init([]) ->
-    {ok, RPS} = unicorn:subscribe(hydra_env:get(config), [<<"rps">>]),
+    RPS = ?DEFAULT_RPS,
     {ok, TRef} = init_pulsar(),
     {ok, #state{rps = RPS, tref = TRef}}.
+
+
+
+set_rps(RPS) when is_integer(RPS), RPS > 0 ->
+    gen_server:call(?MODULE, ?SET_RPS(RPS)).
 
 
 
@@ -43,7 +50,7 @@ handle_cast(Msg, State) ->
 
 
 
-handle_info(?UNICORN_NOTIFY(_File, _Path, RPS, _FullDocument), State) ->
+handle_info(?SET_RPS(RPS), State) ->
     {noreply, State#state{rps = RPS}};
 
 handle_info(?IMPULSE, State) ->
@@ -71,7 +78,6 @@ code_change(_OldVsn, State, _Extra) ->
 
 
 handle_impulse(RPS) ->
-    ?DEBUG("RPS: ~p", [RPS]),
     case hydra_queue:pull(RPS) of
         {error, empty} ->
             nop;
