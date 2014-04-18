@@ -5,22 +5,19 @@
 
 -export([new/1, pull/1, push/3]).
 
+
+
+-type queue_ets() :: #hydra_queue_ets{}.
+
 -export_type([queue_ets/0]).
-
-
-
-%% Types
-
-
-
--type queue_ets() :: {hydra_queue_ets, atom(), hydra_queue_bag:bag()}.
 
 
 
 %% Interface
 
 
--spec new(list()) ->
+
+-spec new(Tables :: [atom()]) ->
     hydra_queue_ets:queue_ets().
 new(Tables) when is_list(Tables), length(Tables) == 5 ->
     #hydra_queue_ets{
@@ -30,9 +27,9 @@ new(Tables) when is_list(Tables), length(Tables) == 5 ->
 
 
 
--spec pull(hydra_queue_ets:queue_ets()) ->
+-spec pull(Queue :: hydra_queue_ets:queue_ets()) ->
     {error, empty} |
-    {ok, hydra_queue_ets:queue_ets(), term()}.
+    {ok, hydra_queue_ets:queue_ets(), [hydra_queue:queue_req()]}.
 pull(Queue) when is_record(Queue, hydra_queue_ets) ->
     #hydra_queue_ets{
         tables = Tables,
@@ -53,7 +50,9 @@ pull(Queue) when is_record(Queue, hydra_queue_ets) ->
             end
     end.
 
--spec pull(list(), list(), hydra_queue_bag:bag()) ->
+
+
+-spec pull([atom()], [hydra_queue:queue_req_priority()], hydra_queue_bag:bag()) ->
     {error, empty} |
     {ok, hydra_queue_ets:queue_ets(), term()}.
 pull(_Tables, [], _Bag) ->
@@ -72,7 +71,7 @@ pull(Tables, [P1 | P], Bag) ->
     end.
 
 
--spec push(hydra_queue_ets:queue_ets(), non_neg_integer(), term()) ->
+-spec push(hydra_queue_ets:queue_ets(), hydra_queue:queue_req_priority(), hydra_queue:queue_req()) ->
     {ok, pushed}.
 push(Queue, Priority, Req) ->
     Table = lists:nth(Priority, Queue#hydra_queue_ets.tables),

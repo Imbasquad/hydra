@@ -5,28 +5,27 @@
 
 -export([new/0, new_linear/0, available/1, buy/2, reset/1]).
 
+
+
+-type bag() :: #hydra_queue_bag{}.
+
 -export_type([bag/0]).
-
-
-
-%% Types
-
-
-
--type bag() :: {hydra_queue_bag, list(), list(), list(), non_neg_integer()}.
 
 
 
 %% Interface
 
 
--spec new() -> hydra_queue_bag:bag().
+
+-spec new() ->
+    hydra_queue_bag:bag().
 new() ->
     new_linear().
 
 
 
--spec new_linear() -> hydra_queue_bag:bag().
+-spec new_linear() ->
+    hydra_queue_bag:bag().
 new_linear() ->
     #hydra_queue_bag{
         p = ps(),
@@ -36,11 +35,16 @@ new_linear() ->
     }.
 
 
--spec available(hydra_queue_bag:bag()) -> list().
+
+-spec available(hydra_queue_bag:bag()) ->
+    list().
 available(#hydra_queue_bag{p = P, pb = PB, pl = PL}) ->
     available(P, [], PB, PL, [], []).
 
--spec available(list(), list(), list(), list(), list(), list()) -> list().
+
+
+-spec available([non_neg_integer()], [non_neg_integer()], [non_neg_integer()], [non_neg_integer()], [non_neg_integer()], [non_neg_integer()]) ->
+    [hydra_queue:queue_req_priority()].
 available([], _PAcc, [], [], _PLAcc, Acc) ->
     Acc;
 
@@ -55,7 +59,8 @@ available([P1 | P], PAcc, [PB1 | PB], [PL1 | PL], PLAcc, Acc) when PB1 =< PL1 ->
 
 
 
--spec buy(hydra_queue_bag:bag(), non_neg_integer()) -> {ok, hydra_queue_bag:bag()}.
+-spec buy(Bag :: hydra_queue_bag:bag(), P :: hydra_queue:queue_req_priority()) ->
+    {ok, hydra_queue_bag:bag()}.
 buy(Bag, P) when is_record(Bag, hydra_queue_bag) ->
     #hydra_queue_bag{pb = PB0, prc = Prc} = Bag,
     PB = lists:nth(P, PB0),
@@ -64,7 +69,8 @@ buy(Bag, P) when is_record(Bag, hydra_queue_bag) ->
 
 
 
--spec reset(hydra_queue_bag:bag()) -> hydra_queue_bag:bag().
+-spec reset(Bag :: hydra_queue_bag:bag()) ->
+    hydra_queue_bag:bag().
 reset(Bag) when is_record(Bag, hydra_queue_bag) ->
     Bag#hydra_queue_bag{pb = pbags()}.
 
@@ -74,19 +80,21 @@ reset(Bag) when is_record(Bag, hydra_queue_bag) ->
 
 
 
+-spec ps() ->
+    [hydra_queue:queue_req_priority()].
 ps() ->
     lists:seq(1, 5).
 
 
 
+-spec pbags() ->
+    [non_neg_integer()].
 pbags() ->
-    lists:foldl(fun(_, Acc) ->
-        Acc ++ [0]
-    end, [], lists:seq(1,5)).
+    [0 || _ <- lists:seq(1, 5)].
 
 
 
+-spec plimits_linear() ->
+    [non_neg_integer()].
 plimits_linear() ->
-    lists:foldl(fun(P, Acc) ->
-        [P | Acc]
-    end, [], lists:seq(1,5)).
+    [P || P <- lists:reverse(lists:seq(1, 5))].

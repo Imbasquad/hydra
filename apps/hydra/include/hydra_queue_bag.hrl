@@ -1,10 +1,10 @@
 -record(hydra_queue_bag, {
-    %% pliorities
-    p :: list(),
+    %% priorities
+    p :: [non_neg_integer()],
     %% priorities bags
-    pb :: list(),
+    pb :: [non_neg_integer()],
     %% priorities limits
-    pl :: list(),
+    pl :: [non_neg_integer()],
     %% price
     prc :: non_neg_integer()
 }).
