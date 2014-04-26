@@ -1,15 +1,15 @@
 all:
-	rebar compile
+	./rebar compile
 
 build:
-	(rebar generate overlay_vars=vars/${ENV}.config)
+	(./rebar generate overlay_vars=vars/${ENV}.config)
 
 clean:
-	rebar clean
+	./rebar clean
 
 depends:
 	rm -rf deps/*
-	rebar get-deps
+	./rebar get-deps
 
 console: all build
 	rel/hydra/bin/hydra console
